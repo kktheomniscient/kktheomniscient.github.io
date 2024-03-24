@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>KK ka Calc</title>
+<style>
+.container{
+  height:400px;
+  aspect-ratio:1/1;
+}
+.calculator{
+  display: grid;
+  grid-template-columns:repeat(4,50px);
+}
+
+.display{
+  grid-column-start:1;
+  grid-column-end:5;
+  height:40px;
+  font-size: 30px;
+  text-align: right;
+  border: 1px solid black;
+  padding-right:10px;
+  padding-top:5px;
+}
+button{
+  height:50px;
+  background-color:white;
+  border:1px solid lightgrey;
+}
+button.operator{
+  background-color:lightgrey;
+}
+</style>
+</head>
+<body>
+ <div id="root"></div>
+
+ <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+ <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
+ <script>
+function Calculator() {
+  const [Calc, setCalc] = React.useState({
+    current: "0",
+    total: "0",
+    isInitial: true,
+    preOp: ""
+  });
+  function HandelNum(value) {
+
+    let newValue = value;
+
+    if (!Calc.isInitial) {
+      newValue = Calc.current + value;
+    }
+    setCalc({ current: newValue, total: Calc.total, isInitial: false, preOp: Calc.preOp });
+  }
+
+  function HandelOpe(value) {
+    const total = DoCalculation();
+
+    setCalc({ current: total.toString(), total: total.toString(), isInitial: true, preOp: value });
+  }
+
+  function DoCalculation() {
+    let total = parseInt(Calc.total);
+    switch (Calc.preOp) {
+      case "+":
+        total += parseInt(Calc.current);
+        break;
+      case "-":
+        total -= parseInt(Calc.current);
+        break;
+      case "*":
+        total *= parseInt(Calc.current);
+        break;
+      case "/":
+        total /= parseInt(Calc.current);
+        break;
+      default:
+        total = parseInt(Calc.current);
+    }
+    return total;
+  }
+
+  function renderDisplay() {
+    return Calc.current;
+  }
+
+  function HandelClear() {
+    setCalc({
+      current: "0",
+      total: "0",
+      isInitial: true,
+      preOp: ""
+    });
+  }
+
+  return React.createElement(
+    "div",
+    { className: "calculator" },
+    React.createElement(
+      "div",
+      { className: "display" },
+      renderDisplay()
+    ),
+    React.createElement(CalcButton, { value: "7", onClick: HandelNum }),
+    React.createElement(CalcButton, { value: "8", onClick: HandelNum }),
+    React.createElement(CalcButton, { value: "9", onClick: HandelNum }),
+    React.createElement(CalcButton, { className: "operator", value: "/", onClick: HandelOpe }),
+    React.createElement(CalcButton, { value: "4", onClick: HandelNum }),
+    React.createElement(CalcButton, { value: "5", onClick: HandelNum }),
+    React.createElement(CalcButton, { value: "6", onClick: HandelNum }),
+    React.createElement(CalcButton, { className: "operator", value: "*", onClick: HandelOpe }),
+    React.createElement(CalcButton, { value: "1", onClick: HandelNum }),
+    React.createElement(CalcButton, { value: "2", onClick: HandelNum }),
+    React.createElement(CalcButton, { value: "3", onClick: HandelNum }),
+    React.createElement(CalcButton, { className: "operator", value: "-", onClick: HandelOpe }),
+    React.createElement(CalcButton, { value: "C", onClick: HandelClear }),
+    React.createElement(CalcButton, { value: "0", onClick: HandelNum }),
+    React.createElement(CalcButton, { value: "=", onClick: HandelOpe }),
+    React.createElement(CalcButton, { className: "operator", value: "+", onClick: HandelOpe })
+  );
+}
+
+function CalcButton(props) {
+  return React.createElement(
+    "button",
+    { className: props.className, onClick: () => props.onClick(props.value) },
+    props.value
+  );
+}
+ReactDOM.render(React.createElement(
+  "div",
+  { className: "container" },
+  React.createElement(Calculator, null)
+), document.getElementById("root"));
+
+
+ </script>
+</body>
